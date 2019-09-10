@@ -11,5 +11,5 @@ public int updateProductCost(int Productid,int cost);
 public int deleteProduct(int Productid);
 public Product getProductById(int Productid);
 public List<Product> getProducts();
-
+public int updateProduct(Product p);
 }

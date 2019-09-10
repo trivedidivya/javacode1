@@ -9,17 +9,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.allstate.training.pojos.Product;
+import com.allstates.training.util.DBUtil;
+
 public class ProductDaoImpl implements ProductDao{
 	private Connection con=null;
 	public ProductDaoImpl() {
+		con=DBUtil.getConnection();
 		
-		 try {
-			 Class.forName("com.mysql.cj.jdbc.Driver");
-			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/allstates","root","admin");
-		} catch (Exception e) {
-			System.out.println("d connection problem");
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -27,12 +24,12 @@ public class ProductDaoImpl implements ProductDao{
 		int i=0;
 		try
 		{
-		String sql="insert into product values(?,?,?,?)";
+		String sql="insert into product(pname,cost,qty) values( ?,?,?)";
 		PreparedStatement ps=con.prepareStatement(sql);
-		ps.setInt(1, p.getProductid());
-		ps.setString(2,p.getPname());
-		ps.setInt(3, p.getCost());
-		ps.setInt(4, p.getQty());
+		//ps.setInt(1, p.getProductid());
+		ps.setString(1,p.getPname());
+		ps.setInt(2, p.getCost());
+		ps.setInt(3, p.getQty());
 		i=ps.executeUpdate();
 		
 		}catch(SQLException e)
@@ -56,7 +53,25 @@ public class ProductDaoImpl implements ProductDao{
 		}
 		return i;
 	}
-
+	@Override
+	public int updateProduct(Product p) {
+		int i=0;
+		try
+		{
+		String sql="update product set qty=? ,cost=?,pname=? where productid=?";
+		PreparedStatement ps=con.prepareStatement(sql);
+		ps.setInt(4, p.getProductid());
+		ps.setString(3,p.getPname());
+		ps.setInt(2, p.getCost());
+		ps.setInt(1, p.getQty());
+		i=ps.executeUpdate();
+		
+		}catch(SQLException e)
+		{
+			System.out.println(e.getMessage());
+		}
+		return i;
+	}
 	@Override
 	public int updateProductCost(int Productid, int cost) {
 		// TODO Auto-generated method stub
@@ -106,6 +121,7 @@ public class ProductDaoImpl implements ProductDao{
 		try {
 			Statement st=con.createStatement();
 			ResultSet rs=st.executeQuery(sql);
+			System.out.println("dao called");
 			while(rs.next())
 			{
 				Product p=new Product();
